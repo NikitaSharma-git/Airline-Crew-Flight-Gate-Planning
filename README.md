@@ -31,7 +31,7 @@ The application currently provides:
 
 Menu option 13 asks for a gate ID and displays the selected compatible flights. Menu option 14 displays a temporary gate plan for all flights. The temporary plan does not overwrite the original gate assignments in the CSV file.
 
-| Prim Minimum Spanning Tree | Builds a minimum-weight undirected airport connection network by repeatedly adding the cheapest edge that expands the current tree. | O(V²) with an adjacency matrix |\n| Kruskal Minimum Spanning Tree | Builds a minimum-weight airport connection network by sorting route edges and joining components without creating cycles. | O(E log E) for edge sorting; DSU operations are near-constant amortized |\n\nMenu option 16 runs Prim and option 17 runs Kruskal. Both treat scheduled flight durations as undirected connection-cost estimates. If the route network is disconnected, they report a minimum spanning forest and its component count.\n\n| Dijkstra Shortest Path | Finds the minimum total scheduled flight duration between two selected airports using the directed flight network. | O(V²) with an adjacency matrix |
+| Prim Minimum Spanning Tree | Builds a minimum-weight undirected airport connection network by repeatedly adding the cheapest edge that expands the current tree. | O(V²) with an adjacency matrix |\n| Kruskal Minimum Spanning Tree | Builds a minimum-weight airport connection network by sorting route edges and joining components without creating cycles. | O(E²) for manual insertion sort; DSU operations are near-constant amortized |\n\nMenu option 16 runs Prim and option 17 runs Kruskal. Both treat scheduled flight durations as undirected connection-cost estimates. If the route network is disconnected, they report a minimum spanning forest and its component count.\n\n| Dijkstra Shortest Path | Finds the minimum total scheduled flight duration between two selected airports using the directed flight network. | O(V²) with an adjacency matrix |
 
 Menu option 15 asks the user to select source and destination airports. The route weights are flight durations; connection and waiting times are not included.
 
@@ -77,7 +77,7 @@ The advanced lab is opened from the main menu and keeps the earlier options 1–
 | Matching | Bipartite Matching | Matches available crew members to individual flight-duty slots when their availability covers the flight. |
 | Number Theory | Chinese Remainder Theorem | Finds a synchronized time offset for user-entered pairwise-coprime schedule cycles. |
 | String Matching | Naive, Rabin-Karp, Finite Automaton and KMP | Searches a generated flight manifest and displays match positions from all four methods. |
-| Integration | CSV export | Writes the loaded flight manifest to data/flight_manifest_export.csv. |
+| Integration | CSV and JSON import/export | Loads the initial CSV, imports the sample JSON manifest in replace or append mode, and exports the current manifest in both formats. |
 
 ### Modeling assumptions and limitations
 
@@ -88,6 +88,10 @@ The advanced lab is opened from the main menu and keeps the earlier options 1–
 - The CRT tool accepts schedule congruences from the user and requires pairwise-coprime positive moduli.
 - The bounded TSP search is exponential and is intentionally restricted to at most 12 airports.
 - The finite-automaton string matcher builds a byte-alphabet transition table and is intended for educational-sized manifests.
+
+### JSON data exchange
+
+The JSON importer reads data/flights.json using the documented flight field names. Choose replace or append mode in advanced menu option 17. Option 18 exports the current manifest to data/flight_manifest_export.json; option 16 exports CSV.
 
 ## Automated tests and benchmarking
 
