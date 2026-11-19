@@ -275,9 +275,9 @@ void showMenu() {
     std::cout << "13. Select maximum non-overlapping flights for a gate (Activity Selection)\n";
     std::cout << "14. Calculate minimum gates required (Interval Partitioning)\n";
     std::cout << "15. Find shortest airport route (Dijkstra)\n";
-    std::cout << "16. Build minimum airport network (Prim)\\n";
-    std::cout << "17. Build minimum airport network (Kruskal)\\n";
-    std::cout << "18. Open Advanced DAA Algorithm Lab\\n";
+    std::cout << "16. Build minimum airport network (Prim)\n";
+    std::cout << "17. Build minimum airport network (Kruskal)\n";
+    std::cout << "18. Open Advanced DAA Algorithm Lab\n";
     std::cout << "0. Exit\n";
     std::cout << "Choose an option: ";
 }
@@ -565,7 +565,7 @@ int main() {
                 }
 
                 if (airports.empty()) {
-                    std::cout << "No airport route data is available.\\n";
+                    std::cout << "No airport route data is available.\n";
                     break;
                 }
 
@@ -597,29 +597,29 @@ int main() {
                     : kruskalMinimumSpanningForest(static_cast<int>(airports.size()), edges);
 
                 std::cout << (choice == 16
-                    ? "\\nPRIM MINIMUM SPANNING NETWORK\\n"
-                    : "\\nKRUSKAL MINIMUM SPANNING NETWORK\\n");
+                    ? "\nPRIM MINIMUM SPANNING NETWORK\n"
+                    : "\nKRUSKAL MINIMUM SPANNING NETWORK\n");
 
                 if (result.edges.empty() && airports.size() > 1) {
-                    std::cout << "No airport connections are available to build a network.\\n";
+                    std::cout << "No airport connections are available to build a network.\n";
                 } else {
                     for (const auto& edge : result.edges) {
                         std::cout << airports[edge.from] << " -- " << airports[edge.to]
-                                  << " | " << edge.weight << " minutes\\n";
+                                  << " | " << edge.weight << " minutes\n";
                     }
-                    std::cout << "Total network weight: " << result.totalWeight << " minutes\\n";
+                    std::cout << "Total network weight: " << result.totalWeight << " minutes\n";
                     if (result.components == 1) {
-                        std::cout << "All airports are connected in one minimum spanning network.\\n";
+                        std::cout << "All airports are connected in one minimum spanning network.\n";
                     } else {
                         std::cout << "The route data is disconnected; displayed a minimum spanning forest with "
-                                  << result.components << " components.\\n";
+                                  << result.components << " components.\n";
                     }
                 }
 
                 std::cout << "Algorithm: " << (choice == 16 ? "Prim" : "Kruskal")
-                          << (choice == 16 ? ", O(V^2) with an adjacency matrix.\\n"
-                                           : ", O(E log E) for sorting edges.\\n");
-                std::cout << "Note: Scheduled flight durations are used as undirected connection-cost estimates.\\n";
+                          << (choice == 16 ? ", O(V^2) with an adjacency matrix.\n"
+                                           : ", O(E log E) for sorting edges.\n");
+                std::cout << "Note: Scheduled flight durations are used as undirected connection-cost estimates.\n";
                 break;
             }
             case 18: runAdvancedAlgorithms(flights, crewMembers, gates); break;
