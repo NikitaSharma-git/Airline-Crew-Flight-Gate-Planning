@@ -1,0 +1,70 @@
+{
+  "flights": [
+    {
+      "flight_id": 1001,
+      "airline": "IndiGo",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "departure": 480,
+      "arrival": 620,
+      "required_crew": 4,
+      "assigned_gate": 1,
+      "delay_minutes": 15
+    },
+    {
+      "flight_id": 1002,
+      "airline": "Air India",
+      "source": "Mumbai",
+      "destination": "Bengaluru",
+      "departure": 540,
+      "arrival": 660,
+      "required_crew": 5,
+      "assigned_gate": 2,
+      "delay_minutes": -5
+    },
+    {
+      "flight_id": 1003,
+      "airline": "IndiGo",
+      "source": "Delhi",
+      "destination": "Dehradun",
+      "departure": 570,
+      "arrival": 630,
+      "required_crew": 3,
+      "assigned_gate": 1,
+      "delay_minutes": 25
+    },
+    {
+      "flight_id": 1004,
+      "airline": "Air India",
+      "source": "Bengaluru",
+      "destination": "Chennai",
+      "departure": 690,
+      "arrival": 780,
+      "required_crew": 4,
+      "assigned_gate": 3,
+      "delay_minutes": -10
+    },
+    {
+      "flight_id": 1005,
+      "airline": "Akasa Air",
+      "source": "Delhi",
+      "destination": "Goa",
+      "departure": 750,
+      "arrival": 900,
+      "required_crew": 4,
+      "assigned_gate": 2,
+      "delay_minutes": 30
+    },
+    {
+      "flight_id": 1006,
+      "airline": "IndiGo",
+      "source": "Dehradun",
+      "destination": "Delhi",
+      "departure": 810,
+      "arrival": 870,
+      "required_crew": 3,
+      "assigned_gate": 4,
+      "delay_minutes": -8
+    }
+  ]
+}
