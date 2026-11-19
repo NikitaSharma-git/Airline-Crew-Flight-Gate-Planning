@@ -8,6 +8,7 @@
 #include "sorting_searching.hpp"
 #include "divide_conquer.hpp"
 #include "greedy_algorithms.hpp"
+#include "graph_algorithms.hpp"
 
 namespace {
 
@@ -271,6 +272,7 @@ void showMenu() {
     std::cout << "12. Analyze two-leg airport connections (Strassen)\n";
     std::cout << "13. Select maximum non-overlapping flights for a gate (Activity Selection)\n";
     std::cout << "14. Calculate minimum gates required (Interval Partitioning)\n";
+    std::cout << "15. Find shortest airport route (Dijkstra)\n";
     std::cout << "0. Exit\n";
     std::cout << "Choose an option: ";
 }
@@ -466,6 +468,82 @@ int main() {
                 std::cout << "The plan reuses a gate when its previous flight has finished.\n";
                 std::cout << "Time complexity: O(n^2) for sorting and gate selection.\n";
                 std::cout << "Note: This is a planning result; it does not overwrite the CSV gate assignments.\n";
+                break;
+            }
+            case 15: {
+                std::vector<std::string> airports;
+                for (const auto& flight : flights) {
+                    bool sourceFound = false, destinationFound = false;
+                    for (const auto& airport : airports) {
+                        if (airport == flight.source) sourceFound = true;
+                        if (airport == flight.destination) destinationFound = true;
+                    }
+                    if (!sourceFound) airports.push_back(flight.source);
+                    if (!destinationFound) airports.push_back(flight.destination);
+                }
+
+                if (airports.empty()) {
+                    std::cout << "No airport route data is available.\n";
+                    break;
+                }
+
+                const int n = static_cast<int>(airports.size());
+                const int infinity = 1000000000;
+                std::vector<std::vector<int>> graph(n, std::vector<int>(n, 0));
+                for (const auto& flight : flights) {
+                    int from = -1, to = -1;
+                    for (int i = 0; i < n; ++i) {
+                        if (airports[i] == flight.source) from = i;
+                        if (airports[i] == flight.destination) to = i;
+                    }
+                    int duration = flight.arrivalTime - flight.departureTime;
+                    if (from != -1 && to != -1 && duration > 0 &&
+                        (graph[from][to] == 0 || duration < graph[from][to])) {
+                        graph[from][to] = duration;
+                    }
+                }
+
+                std::cout << "\nAIRPORTS IN THE ROUTE NETWORK\n";
+                for (int i = 0; i < n; ++i) std::cout << i + 1 << ". " << airports[i] << "\n";
+
+                int sourceChoice, destinationChoice;
+                std::cout << "Enter source airport number: ";
+                if (!(std::cin >> sourceChoice) || sourceChoice < 1 || sourceChoice > n) {
+                    std::cin.clear();
+                    std::cin.ignore(10000, '\n');
+                    std::cout << "Invalid source airport number.\n";
+                    break;
+                }
+                std::cout << "Enter destination airport number: ";
+                if (!(std::cin >> destinationChoice) || destinationChoice < 1 || destinationChoice > n) {
+                    std::cin.clear();
+                    std::cin.ignore(10000, '\n');
+                    std::cout << "Invalid destination airport number.\n";
+                    break;
+                }
+
+                int source = sourceChoice - 1;
+                int destination = destinationChoice - 1;
+                DijkstraResult result = dijkstraShortestPath(graph, source);
+                std::cout << "\nDIJKSTRA SHORTEST ROUTE\n";
+                if (result.distance[destination] >= infinity) {
+                    std::cout << "No directed route exists from " << airports[source]
+                              << " to " << airports[destination] << ".\n";
+                } else {
+                    std::vector<int> path;
+                    for (int vertex = destination; vertex != -1; vertex = result.parent[vertex]) {
+                        path.push_back(vertex);
+                    }
+                    std::cout << "Shortest route: ";
+                    for (int i = static_cast<int>(path.size()) - 1; i >= 0; --i) {
+                        std::cout << airports[path[i]];
+                        if (i > 0) std::cout << " -> ";
+                    }
+                    std::cout << "\nTotal flight duration: " << result.distance[destination]
+                              << " minutes\n";
+                }
+                std::cout << "Algorithm: Dijkstra with an adjacency matrix, O(V^2).\n";
+                std::cout << "Note: Route weights use scheduled flight durations, not connection/waiting times.\n";
                 break;
             }
             case 0: std::cout << "Exiting Airline Planning Suite. Goodbye!\n"; break;
