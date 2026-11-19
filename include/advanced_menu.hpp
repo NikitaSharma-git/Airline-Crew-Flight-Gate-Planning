@@ -1,6 +1,7 @@
 #ifndef AIRLINE_ADVANCED_MENU_HPP
 #define AIRLINE_ADVANCED_MENU_HPP
 
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -208,13 +209,27 @@ inline void runAdvancedAlgorithms(std::vector<Flight>& flights,
                       << longestCommonSubsequence(sources, destinations) << " characters.\n";
             std::cout << "LCS dynamic programming complexity: O(mn).\n";
         } else if (option == 5) {
-            std::vector<int> frequency;
-            std::cout << "\nAirport lookup frequency weights (incoming flight count + 1):\n";
+            std::vector<std::pair<std::string, int>> airportWeights;
             for (const auto& airport : airports) {
                 int incoming = 0;
                 for (const auto& f : flights) if (f.destination == airport) ++incoming;
-                frequency.push_back(incoming + 1);
-                std::cout << airport << ": " << incoming + 1 << "\n";
+                airportWeights.push_back({airport, incoming + 1});
+            }
+            // Optimal BST keys must be ordered; sort airport names with insertion sort.
+            for (std::size_t i = 1; i < airportWeights.size(); ++i) {
+                auto current = airportWeights[i];
+                int j = static_cast<int>(i) - 1;
+                while (j >= 0 && airportWeights[j].first > current.first) {
+                    airportWeights[j + 1] = airportWeights[j];
+                    --j;
+                }
+                airportWeights[j + 1] = current;
+            }
+            std::vector<int> frequency;
+            std::cout << "\nAirport lookup frequency weights (incoming flight count + 1):\n";
+            for (const auto& item : airportWeights) {
+                frequency.push_back(item.second);
+                std::cout << item.first << ": " << item.second << "\n";
             }
             std::cout << "Optimal BST weighted search cost: " << optimalBstCost(frequency) << "\n";
         } else if (option == 6) {
