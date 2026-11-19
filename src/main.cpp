@@ -6,6 +6,7 @@
 
 #include "models.hpp"
 #include "sorting_searching.hpp"
+#include "divide_conquer.hpp"
 
 namespace {
 
@@ -263,6 +264,11 @@ void showMenu() {
     std::cout << "7. Sort flights using Quick Sort\n";
     std::cout << "8. Search flight using Iterative Binary Search\n";
     std::cout << "9. Search flight using Recursive Binary Search\n";
+    std::cout << "10. Maximum Subarray (Divide and Conquer)\n";
+    std::cout << "11. Fast Exponentiation\n";
+    std::cout << "12. Celebrity Problem\n";
+    std::cout << "13. Classical Matrix Multiplication\n";
+    std::cout << "14. Strassen Matrix Multiplication\n";
     std::cout << "0. Exit\n";
     std::cout << "Choose an option: ";
 }
@@ -306,6 +312,91 @@ int main() {
             case 7: sortFlightsQuick(flights); break;
             case 8: binarySearchFlight(flights, false); break;
             case 9: binarySearchFlight(flights, true); break;
+            case 10: {
+                int n;
+                std::cout << "Enter number of elements: ";
+                if (!(std::cin >> n) || n <= 0 || n > 100000) {
+                    std::cin.clear(); std::cin.ignore(10000, '\n');
+                    std::cout << "Enter a valid size between 1 and 100000.\n"; break;
+                }
+                std::vector<long long> values(n);
+                std::cout << "Enter " << n << " integers: ";
+                bool valid = true;
+                for (int i = 0; i < n; ++i) if (!(std::cin >> values[i])) { valid = false; break; }
+                if (!valid) {
+                    std::cin.clear(); std::cin.ignore(10000, '\n');
+                    std::cout << "Invalid input.\n"; break;
+                }
+                const MaxSubarrayResult result = maximumSubarray(values, 0, n - 1);
+                std::cout << "Maximum subarray sum: " << result.sum
+                          << " (indices " << result.left << " to " << result.right << ")\n";
+                break;
+            }
+            case 11: {
+                double base; long long exponent;
+                std::cout << "Enter base and integer exponent: ";
+                if (!(std::cin >> base >> exponent)) {
+                    std::cin.clear(); std::cin.ignore(10000, '\n');
+                    std::cout << "Invalid input.\n"; break;
+                }
+                if (base == 0.0 && exponent < 0) {
+                    std::cout << "Zero cannot have a negative exponent.\n"; break;
+                }
+                std::cout << "Result: " << fastPower(base, exponent) << '\n';
+                break;
+            }
+            case 12: {
+                int n;
+                std::cout << "Enter number of people: ";
+                if (!(std::cin >> n) || n <= 0 || n > 1000) {
+                    std::cin.clear(); std::cin.ignore(10000, '\n');
+                    std::cout << "Enter a valid size between 1 and 1000.\n"; break;
+                }
+                std::vector<std::vector<int>> knows(n, std::vector<int>(n));
+                std::cout << "Enter the acquaintance matrix (0 or 1), row by row:\n";
+                bool valid = true;
+                for (int i = 0; i < n && valid; ++i)
+                    for (int j = 0; j < n; ++j)
+                        if (!(std::cin >> knows[i][j]) ||
+                            (knows[i][j] != 0 && knows[i][j] != 1)) { valid = false; break; }
+                if (!valid) {
+                    std::cin.clear(); std::cin.ignore(10000, '\n');
+                    std::cout << "Matrix must contain only 0 and 1.\n"; break;
+                }
+                const int person = findCelebrity(knows);
+                if (person == -1) std::cout << "No celebrity exists.\n";
+                else std::cout << "Celebrity found: Person " << person << " (zero-based index).\n";
+                break;
+            }
+            case 13:
+            case 14: {
+                int n;
+                std::cout << "Enter square matrix dimension (1-64): ";
+                if (!(std::cin >> n) || n <= 0 || n > 64) {
+                    std::cin.clear(); std::cin.ignore(10000, '\n');
+                    std::cout << "Enter a valid dimension between 1 and 64.\n"; break;
+                }
+                Matrix a(n, std::vector<long long>(n)), b(n, std::vector<long long>(n));
+                bool valid = true;
+                std::cout << "Enter matrix A row by row:\n";
+                for (int i = 0; i < n && valid; ++i)
+                    for (int j = 0; j < n; ++j)
+                        if (!(std::cin >> a[i][j])) { valid = false; break; }
+                std::cout << "Enter matrix B row by row:\n";
+                for (int i = 0; i < n && valid; ++i)
+                    for (int j = 0; j < n; ++j)
+                        if (!(std::cin >> b[i][j])) { valid = false; break; }
+                if (!valid) {
+                    std::cin.clear(); std::cin.ignore(10000, '\n');
+                    std::cout << "Invalid matrix input.\n"; break;
+                }
+                Matrix product = (choice == 13) ? classicalMatrixMultiply(a, b)
+                                                  : strassenMatrixMultiply(a, b);
+                std::cout << (choice == 13 ? "Classical" : "Strassen")
+                          << " multiplication result:\n";
+                printMatrix(product);
+                break;
+            }
             case 0: std::cout << "Exiting Airline Planning Suite. Goodbye!\n"; break;
             default: std::cout << "Invalid option. Try again.\n";
         }
