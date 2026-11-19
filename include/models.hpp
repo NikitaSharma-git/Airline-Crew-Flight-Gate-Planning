@@ -12,6 +12,7 @@ struct Flight {
     int arrivalTime{};   // Minutes after midnight
     int requiredCrew{};
     int assignedGate{};  // 0 means not assigned
+    int delayMinutes{};  // Positive = late, negative = early
 };
 
 struct Crew {
