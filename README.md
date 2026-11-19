@@ -4,7 +4,7 @@ A C++17 student project that models airline operations, including flights, crew 
 
 ## Project status
 
-**Phase 2 – Sorting and Searching**
+**Phase 3 – Divide and Conquer**
 
 The application currently provides:
 - Core Flight, Crew and Gate data structures.
@@ -15,7 +15,23 @@ The application currently provides:
 - Basic overlapping gate-assignment conflict detection.
 - Merge Sort and Quick Sort implementations for sorting flights by flight ID.
 - Iterative and Recursive Binary Search implementations for flight-ID lookup.
-- Comparison counters for the sorting and binary-search operations.
+- Comparison counters for sorting and binary-search operations.
+- Divide-and-Conquer maximum subarray with index reporting.
+- Fast exponentiation by squaring, including negative integer exponents.
+- Celebrity identification by candidate elimination and verification.
+- Classical and Strassen square matrix multiplication; Strassen pads dimensions to a power of two.
+
+## Phase 3 algorithm notes
+
+| Algorithm | Time complexity |
+|---|---|
+| Maximum Subarray (Divide and Conquer) | O(n log n) |
+| Fast Exponentiation | O(log n) |
+| Celebrity Problem | O(n) |
+| Classical Matrix Multiplication | O(n³) |
+| Strassen Matrix Multiplication | O(n^log₂7), approximately O(n²·⁸⁰⁷) |
+
+The celebrity matrix uses 1 when the row person knows the column person and 0 otherwise. The result uses a zero-based person index. Matrix multiplication accepts square matrices of dimensions 1–64.
 
 ## Phase 2 algorithm notes
 
