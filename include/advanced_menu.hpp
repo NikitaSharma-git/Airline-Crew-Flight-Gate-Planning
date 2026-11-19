@@ -93,6 +93,8 @@ inline void runAdvancedAlgorithms(std::vector<Flight>& flights,
                                  const std::vector<Crew>& crew,
                                  const std::vector<Gate>& gates) {
     using namespace advanced;
+    std::cout << "Current data - flights: " << flights.size()
+              << " | crew: " << crew.size() << " | gates: " << gates.size() << "\n";
     std::vector<std::string> airports;
     for (const auto& f : flights) {
         bool a = false, b = false;
