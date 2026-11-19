@@ -313,7 +313,7 @@ int main() {
             case 9: binarySearchFlight(flights, true); break;
             case 10: {
                 if (flights.empty()) {
-                    std::cout << "No flight records are available.\\n";
+                    std::cout << "No flight records are available.\n";
                     break;
                 }
 
@@ -333,14 +333,14 @@ int main() {
                 for (const auto& flight : chronological) delays.push_back(flight.delayMinutes);
                 MaxSubarrayResult result = maximumSubarray(delays, 0, static_cast<int>(delays.size()) - 1);
 
-                std::cout << "\\nMAXIMUM CONSECUTIVE FLIGHT DELAY IMPACT\\n";
+                std::cout << "\nMAXIMUM CONSECUTIVE FLIGHT DELAY IMPACT\n";
                 std::cout << "Flights in the highest-impact consecutive period: ";
                 for (int i = result.left; i <= result.right; ++i) {
                     if (i > result.left) std::cout << ", ";
                     std::cout << chronological[i].flightID << " (" << chronological[i].delayMinutes << " min)";
                 }
-                std::cout << "\\nCombined net delay impact: " << result.sum << " minutes\\n";
-                std::cout << "Algorithm: Divide and Conquer Maximum Subarray, O(n log n).\\n";
+                std::cout << "\nCombined net delay impact: " << result.sum << " minutes\n";
+                std::cout << "Algorithm: Divide and Conquer Maximum Subarray, O(n log n).\n";
                 break;
             }
             case 11: {
@@ -367,15 +367,15 @@ int main() {
                 }
 
                 int celebrity = findCelebrity(routes);
-                std::cout << "\\nDESTINATION-ONLY AIRPORT ANALYSIS\\n";
+                std::cout << "\nDESTINATION-ONLY AIRPORT ANALYSIS\n";
                 if (celebrity == -1) {
-                    std::cout << "No destination-only airport exists in the current flight network.\\n";
+                    std::cout << "No destination-only airport exists in the current flight network.\n";
                 } else {
                     std::cout << airports[celebrity]
                               << " is a destination-only airport: every other airport has a direct route to it, "
-                                 "and it has no outgoing route to the others.\\n";
+                                 "and it has no outgoing route to the others.\n";
                 }
-                std::cout << "Algorithm: Celebrity candidate elimination, O(V).\\n";
+                std::cout << "Algorithm: Celebrity candidate elimination, O(V).\n";
                 break;
             }
             case 12: {
@@ -391,7 +391,7 @@ int main() {
                 }
 
                 if (airports.empty()) {
-                    std::cout << "No airport route data is available.\\n";
+                    std::cout << "No airport route data is available.\n";
                     break;
                 }
 
@@ -407,10 +407,10 @@ int main() {
                 }
 
                 Matrix twoLegRoutes = strassenMatrixMultiply(connections, connections);
-                std::cout << "\\nTWO-LEG AIRPORT CONNECTIONS\\n";
-                std::cout << "Each cell shows the number of two-flight paths from its row airport to its column airport.\\n";
+                std::cout << "\nTWO-LEG AIRPORT CONNECTIONS\n";
+                std::cout << "Each cell shows the number of two-flight paths from its row airport to its column airport.\n";
                 printMatrix(twoLegRoutes, airports);
-                std::cout << "Algorithm: Strassen Matrix Multiplication, O(V^log2(7)) approximately O(V^2.807).\\n";
+                std::cout << "Algorithm: Strassen Matrix Multiplication, O(V^log2(7)) approximately O(V^2.807).\n";
                 break;
             }
             case 0: std::cout << "Exiting Airline Planning Suite. Goodbye!\n"; break;
