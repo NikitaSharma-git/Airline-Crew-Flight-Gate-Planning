@@ -10,6 +10,7 @@
 #include "divide_conquer.hpp"
 #include "greedy_algorithms.hpp"
 #include "graph_algorithms.hpp"
+#include "advanced_menu.hpp"
 
 namespace {
 
@@ -276,6 +277,7 @@ void showMenu() {
     std::cout << "15. Find shortest airport route (Dijkstra)\n";
     std::cout << "16. Build minimum airport network (Prim)\\n";
     std::cout << "17. Build minimum airport network (Kruskal)\\n";
+    std::cout << "18. Open Advanced DAA Algorithm Lab\\n";
     std::cout << "0. Exit\n";
     std::cout << "Choose an option: ";
 }
@@ -620,6 +622,7 @@ int main() {
                 std::cout << "Note: Scheduled flight durations are used as undirected connection-cost estimates.\\n";
                 break;
             }
+            case 18: runAdvancedAlgorithms(flights, crewMembers, gates); break;
             case 0: std::cout << "Exiting Airline Planning Suite. Goodbye!\n"; break;
             default: std::cout << "Invalid option. Try again.\n";
         }
