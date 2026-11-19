@@ -114,6 +114,18 @@ The GitHub Actions workflow in .github/workflows/cpp.yml configures CMake, build
 
 The tests cover representative known-answer cases for the dynamic-programming, backtracking, branch-and-bound, flow, matching, CRT, string-matching and Huffman implementations. Benchmark timings depend on the machine and compiler; they are measurements, not fixed performance claims.
 
+
+### Scenario testing and release
+
+See docs/TEST_SCENARIOS.md for normal-operation, crew-capacity-shock and large-data stress procedures. See docs/COMPLEXITY_REPORT.md for algorithm bounds and docs/DEMO_SCRIPT.md for a presentation walkthrough.
+
+The JSON importer targets the project's flat flight-object schema in data/flights.json; it is not a general-purpose JSON parser and does not support arbitrary nested JSON or escaped quotation marks in string fields.
+
+After the local build and tests pass, create and push the release tag:
+
+    git tag -a v1.0.0 -m "Airline Planning Suite DAA release"
+    git push origin v1.0.0
+
 ## Requirements
 
 - C++17 compiler (GCC/MinGW, Clang or MSVC)
