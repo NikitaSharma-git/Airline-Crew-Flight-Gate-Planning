@@ -265,11 +265,9 @@ void showMenu() {
     std::cout << "7. Sort flights using Quick Sort\n";
     std::cout << "8. Search flight using Iterative Binary Search\n";
     std::cout << "9. Search flight using Recursive Binary Search\n";
-    std::cout << "10. Maximum Subarray (Divide and Conquer)\n";
-    std::cout << "11. Fast Exponentiation\n";
-    std::cout << "12. Celebrity Problem\n";
-    std::cout << "13. Classical Matrix Multiplication\n";
-    std::cout << "14. Strassen Matrix Multiplication\n";
+    std::cout << "10. Analyze consecutive flight delays (Maximum Subarray)\n";
+    std::cout << "11. Find destination-only airport (Celebrity Problem)\n";
+    std::cout << "12. Analyze two-leg airport connections (Strassen)\n";
     std::cout << "0. Exit\n";
     std::cout << "Choose an option: ";
 }
