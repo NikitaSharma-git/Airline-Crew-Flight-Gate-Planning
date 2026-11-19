@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -6,6 +5,7 @@
 #include <vector>
 
 #include "models.hpp"
+#include "sorting_searching.hpp"
 
 namespace {
 
@@ -14,9 +14,7 @@ std::vector<std::string> splitCsvLine(const std::string& line) {
     std::stringstream stream(line);
     std::string field;
 
-    while (std::getline(stream, field, ',')) {
-        fields.push_back(field);
-    }
+    while (std::getline(stream, field, ',')) fields.push_back(field);
     return fields;
 }
 
@@ -25,7 +23,7 @@ bool loadFlights(const std::string& path, std::vector<Flight>& flights) {
     if (!file) return false;
 
     std::string line;
-    std::getline(file, line); // Header
+    std::getline(file, line);
 
     while (std::getline(file, line)) {
         if (line.empty()) continue;
@@ -103,6 +101,16 @@ bool loadGates(const std::string& path, std::vector<Gate>& gates) {
     return true;
 }
 
+void showFlightDetails(const Flight& flight) {
+    std::cout << "Flight " << flight.flightID << ": "
+              << flight.airline << ", " << flight.source << " to "
+              << flight.destination
+              << ", departure " << formatTime(flight.departureTime)
+              << ", arrival " << formatTime(flight.arrivalTime)
+              << ", crew " << flight.requiredCrew
+              << ", gate " << flight.assignedGate << '\n';
+}
+
 void showFlights(const std::vector<Flight>& flights) {
     std::cout << "\nFLIGHT SCHEDULE\n";
     std::cout << "--------------------------------------------------------------------------\n";
@@ -155,12 +163,8 @@ void detectGateConflicts(const std::vector<Flight>& flights) {
             const auto& first = flights[i];
             const auto& second = flights[j];
 
-            if (first.assignedGate == 0 ||
-                first.assignedGate != second.assignedGate) {
-                continue;
-            }
+            if (first.assignedGate == 0 || first.assignedGate != second.assignedGate) continue;
 
-            // A flight occupies its gate from departure through arrival.
             const bool overlaps =
                 first.departureTime < second.arrivalTime &&
                 second.departureTime < first.arrivalTime;
@@ -174,12 +178,10 @@ void detectGateConflicts(const std::vector<Flight>& flights) {
         }
     }
 
-    if (!foundConflict) {
-        std::cout << "No overlapping gate assignments found.\n";
-    }
+    if (!foundConflict) std::cout << "No overlapping gate assignments found.\n";
 }
 
-void searchFlight(const std::vector<Flight>& flights) {
+void searchFlightLinear(const std::vector<Flight>& flights) {
     int targetID;
     std::cout << "Enter flight ID: ";
     if (!(std::cin >> targetID)) {
@@ -191,16 +193,61 @@ void searchFlight(const std::vector<Flight>& flights) {
 
     for (const auto& flight : flights) {
         if (flight.flightID == targetID) {
-            std::cout << "Flight " << flight.flightID << ": "
-                      << flight.airline << ", "
-                      << flight.source << " to " << flight.destination
-                      << ", departure " << formatTime(flight.departureTime)
-                      << ", arrival " << formatTime(flight.arrivalTime)
-                      << ", Gate " << flight.assignedGate << '\n';
+            showFlightDetails(flight);
             return;
         }
     }
     std::cout << "Flight not found.\n";
+}
+
+void sortFlightsMerge(std::vector<Flight>& flights) {
+    unsigned long long comparisons = 0;
+    if (!flights.empty()) {
+        mergeSortFlights(flights, 0, static_cast<int>(flights.size()) - 1, comparisons);
+    }
+    std::cout << "Flights sorted by ID using Merge Sort. Comparisons: "
+              << comparisons << '\n';
+    showFlights(flights);
+}
+
+void sortFlightsQuick(std::vector<Flight>& flights) {
+    unsigned long long comparisons = 0;
+    if (!flights.empty()) {
+        quickSortFlights(flights, 0, static_cast<int>(flights.size()) - 1, comparisons);
+    }
+    std::cout << "Flights sorted by ID using Quick Sort. Comparisons: "
+              << comparisons << '\n';
+    showFlights(flights);
+}
+
+void binarySearchFlight(const std::vector<Flight>& flights, bool recursive) {
+    int targetID;
+    std::cout << "Enter flight ID to search: ";
+    if (!(std::cin >> targetID)) {
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+        std::cout << "Invalid flight ID.\n";
+        return;
+    }
+
+    unsigned long long comparisons = 0;
+    int index = -1;
+
+    if (recursive) {
+        index = recursiveBinarySearch(flights, targetID, 0,
+                                      static_cast<int>(flights.size()) - 1, comparisons);
+    } else {
+        index = iterativeBinarySearch(flights, targetID, comparisons);
+    }
+
+    std::cout << (recursive ? "Recursive" : "Iterative")
+              << " Binary Search comparisons: " << comparisons << '\n';
+
+    if (index == -1) {
+        std::cout << "Flight not found.\n";
+    } else {
+        showFlightDetails(flights[index]);
+    }
 }
 
 void showMenu() {
@@ -208,10 +255,14 @@ void showMenu() {
     std::cout << " AIRLINE CREW, FLIGHT AND GATE PLANNING SUITE\n";
     std::cout << "===============================================\n";
     std::cout << "1. View all flights\n";
-    std::cout << "2. Search flight by ID\n";
+    std::cout << "2. Search flight by ID (Linear Search)\n";
     std::cout << "3. View crew members\n";
     std::cout << "4. View airport gates\n";
     std::cout << "5. Detect gate conflicts\n";
+    std::cout << "6. Sort flights using Merge Sort\n";
+    std::cout << "7. Sort flights using Quick Sort\n";
+    std::cout << "8. Search flight using Iterative Binary Search\n";
+    std::cout << "9. Search flight using Recursive Binary Search\n";
     std::cout << "0. Exit\n";
     std::cout << "Choose an option: ";
 }
@@ -247,10 +298,14 @@ int main() {
 
         switch (choice) {
             case 1: showFlights(flights); break;
-            case 2: searchFlight(flights); break;
+            case 2: searchFlightLinear(flights); break;
             case 3: showCrew(crewMembers); break;
             case 4: showGates(gates); break;
             case 5: detectGateConflicts(flights); break;
+            case 6: sortFlightsMerge(flights); break;
+            case 7: sortFlightsQuick(flights); break;
+            case 8: binarySearchFlight(flights, false); break;
+            case 9: binarySearchFlight(flights, true); break;
             case 0: std::cout << "Exiting Airline Planning Suite. Goodbye!\n"; break;
             default: std::cout << "Invalid option. Try again.\n";
         }
