@@ -7,6 +7,7 @@
 #include "models.hpp"
 #include "sorting_searching.hpp"
 #include "divide_conquer.hpp"
+#include "greedy_algorithms.hpp"
 
 namespace {
 
@@ -268,6 +269,8 @@ void showMenu() {
     std::cout << "10. Analyze consecutive flight delays (Maximum Subarray)\n";
     std::cout << "11. Find destination-only airport (Celebrity Problem)\n";
     std::cout << "12. Analyze two-leg airport connections (Strassen)\n";
+    std::cout << "13. Select maximum non-overlapping flights for a gate (Activity Selection)\n";
+    std::cout << "14. Calculate minimum gates required (Interval Partitioning)\n";
     std::cout << "0. Exit\n";
     std::cout << "Choose an option: ";
 }
@@ -411,6 +414,58 @@ int main() {
                 std::cout << "Each cell shows the number of two-flight paths from its row airport to its column airport.\n";
                 printMatrix(twoLegRoutes, airports);
                 std::cout << "Algorithm: Strassen Matrix Multiplication, O(V^log2(7)) approximately O(V^2.807).\n";
+                break;
+            }
+            case 13: {
+                int gateID;
+                std::cout << "Enter gate ID: ";
+                if (!(std::cin >> gateID)) {
+                    std::cin.clear();
+                    std::cin.ignore(10000, '\n');
+                    std::cout << "Invalid gate ID.\n";
+                    break;
+                }
+
+                std::vector<Flight> gateFlights;
+                for (const auto& flight : flights) {
+                    if (flight.assignedGate == gateID) gateFlights.push_back(flight);
+                }
+
+                if (gateFlights.empty()) {
+                    std::cout << "No flights are currently assigned to Gate " << gateID << ".\n";
+                    break;
+                }
+
+                FlightSelectionResult result = selectMaximumNonOverlappingFlights(gateFlights);
+                std::cout << "\nACTIVITY SELECTION - GATE " << gateID << "\n";
+                std::cout << "Maximum compatible flights: " << result.selectedFlights.size() << "\n";
+                for (const auto& flight : result.selectedFlights) {
+                    std::cout << "Flight " << flight.flightID << " | "
+                              << formatTime(flight.departureTime) << "-"
+                              << formatTime(flight.arrivalTime) << "\n";
+                }
+                std::cout << "Greedy rule: repeatedly choose the compatible flight that finishes earliest.\n";
+                std::cout << "Time complexity: O(n^2) with the manual insertion sort used here.\n";
+                break;
+            }
+            case 14: {
+                if (flights.empty()) {
+                    std::cout << "No flights are available for gate planning.\n";
+                    break;
+                }
+
+                IntervalPartitionResult result = allocateMinimumGates(flights);
+                std::cout << "\nINTERVAL PARTITIONING - TEMPORARY GATE PLAN\n";
+                std::cout << "Minimum gates required: " << result.minimumGates << "\n";
+                for (const auto& allocation : result.allocations) {
+                    std::cout << "Flight " << allocation.flight.flightID << " | "
+                              << formatTime(allocation.flight.departureTime) << "-"
+                              << formatTime(allocation.flight.arrivalTime)
+                              << " -> Temporary Gate " << allocation.temporaryGate << "\n";
+                }
+                std::cout << "The plan reuses a gate when its previous flight has finished.\n";
+                std::cout << "Time complexity: O(n^2) for sorting and gate selection.\n";
+                std::cout << "Note: This is a planning result; it does not overwrite the CSV gate assignments.\n";
                 break;
             }
             case 0: std::cout << "Exiting Airline Planning Suite. Goodbye!\n"; break;
