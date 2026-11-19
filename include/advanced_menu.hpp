@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <limits>
 #include <regex>
 #include <string>
@@ -139,6 +140,8 @@ inline void runAdvancedAlgorithms(std::vector<Flight>& flights,
                   << "14. Chinese Remainder Theorem schedule synchronization\n"
                   << "15. String matching: Naive / Rabin-Karp / FA / KMP\n"
                   << "16. Export current flight manifest to CSV\n"
+                  << "17. Import flight manifest from JSON\n"
+                  << "18. Export current flight manifest to JSON\n"
                   << "0. Return to main menu\n"
                   << "Select: ";
         if (!(std::cin >> option)) {
