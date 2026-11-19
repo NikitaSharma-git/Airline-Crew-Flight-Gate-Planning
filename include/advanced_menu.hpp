@@ -137,7 +137,7 @@ inline void runAdvancedAlgorithms(std::vector<Flight>& flights,
                   << "8. Bounded TSP airport tour\n"
                   << "9. N-Queens backtracking\n"
                   << "10. Subset Sum using crew requirements\n"
-                  << "11. Branch and Bound Knapsack (FIFO / LIFO / Least-bound)\n"
+                  << "11. Branch and Bound Knapsack (FIFO / LIFO / Best-bound)\n"
                   << "12. Ford-Fulkerson route crew-capacity flow model\n"
                   << "13. Bipartite matching: crew to flight duty slots\n"
                   << "14. Chinese Remainder Theorem schedule synchronization\n"
