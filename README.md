@@ -4,18 +4,29 @@ A C++17 student project that models airline operations, including flights, crew 
 
 ## Project status
 
-**Phase 1 – Foundation**
+**Phase 2 – Sorting and Searching**
 
-The initial version provides:
+The application currently provides:
 - Core Flight, Crew and Gate data structures.
 - CSV loading for sample flights, crew and gates.
 - A menu-driven command-line interface.
-- Flight listing and flight-ID lookup.
+- Flight listing and linear flight-ID lookup.
 - Crew and gate directories.
 - Basic overlapping gate-assignment conflict detection.
-- A CMake build configuration.
+- Merge Sort and Quick Sort implementations for sorting flights by flight ID.
+- Iterative and Recursive Binary Search implementations for flight-ID lookup.
+- Comparison counters for the sorting and binary-search operations.
 
-More DAA algorithms and scheduling features will be integrated in subsequent phases.
+## Phase 2 algorithm notes
+
+| Algorithm | Purpose | Time complexity |
+|---|---|---|
+| Merge Sort | Sort flights by ID | O(n log n) in best, average and worst cases |
+| Quick Sort | Sort flights by ID | O(n log n) average; O(n²) worst case |
+| Iterative Binary Search | Find a flight in an ID-sorted list | O(log n) |
+| Recursive Binary Search | Find a flight in an ID-sorted list | O(log n) |
+
+**Important:** Binary Search requires the flight list to be sorted by flight ID first. Run option 6 or 7 before options 8 or 9. Option 2 remains Linear Search and works regardless of sorting order.
 
 ## Requirements
 
@@ -31,23 +42,7 @@ cmake -S . -B build
 cmake --build build
 ```
 
-Run the application from the repository root so the relative CSV data paths resolve:
-
-**Windows**
-```bash
-build\Debug\airline_planner.exe
-```
-
-For a single-configuration generator such as MinGW Makefiles:
-
-```bash
-build/airline_planner.exe
-```
-
-**Linux/macOS**
-```bash
-./build/airline_planner
-```
+Run the application from the repository root so the relative CSV data paths resolve.
 
 ## Alternative: compile directly with g++
 
@@ -55,13 +50,11 @@ build/airline_planner.exe
 g++ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude src/main.cpp -o airline_planner
 ```
 
-Run from the repository root:
+On Windows PowerShell, run:
 
-```bash
-./airline_planner
+```powershell
+.\airline_planner.exe
 ```
-
-On Windows, run `airline_planner.exe`.
 
 ## Sample data
 
@@ -85,7 +78,7 @@ Times are represented as minutes after midnight. For example, 480 represents 08:
 
 ## Academic note
 
-Mandatory DAA algorithms will be implemented as student-owned implementations rather than replaced with library algorithm calls. Standard library containers and utilities may be used for supporting application code.
+Mandatory DAA algorithms are implemented directly rather than replaced with library sorting or searching calls. Standard library containers and utilities are used for supporting application code.
 
 ## License
 
