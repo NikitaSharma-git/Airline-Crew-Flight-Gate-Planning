@@ -130,7 +130,7 @@ inline TspResult boundedTsp(const std::vector<std::vector<int>>& graph, int star
         ++best.explored;
         if (cost >= best.cost) return;
         if (static_cast<int>(path.size()) == n) {
-            if (graph[current][start] > 0 && cost + graph[current][start] < best.cost) {
+            if (graph[current][start] > 0 && graph[current][start] < inf && cost + graph[current][start] < best.cost) {
                 best.cost = cost + graph[current][start];
                 best.path = path;
                 best.path.push_back(start);
@@ -138,7 +138,7 @@ inline TspResult boundedTsp(const std::vector<std::vector<int>>& graph, int star
             return;
         }
         for (int next = 0; next < n; ++next)
-            if (!used[next] && graph[current][next] > 0) {
+            if (!used[next] && graph[current][next] > 0 && graph[current][next] < inf) {
                 used[next] = true; path.push_back(next);
                 search(next, cost + graph[current][next]);
                 path.pop_back(); used[next] = false;
