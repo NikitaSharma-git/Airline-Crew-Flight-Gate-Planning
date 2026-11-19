@@ -29,7 +29,7 @@ bool loadFlights(const std::string& path, std::vector<Flight>& flights) {
     while (std::getline(file, line)) {
         if (line.empty()) continue;
         const auto fields = splitCsvLine(line);
-        if (fields.size() != 8) continue;
+        if (fields.size() != 9) continue;
 
         try {
             Flight flight;
@@ -41,6 +41,7 @@ bool loadFlights(const std::string& path, std::vector<Flight>& flights) {
             flight.arrivalTime = std::stoi(fields[5]);
             flight.requiredCrew = std::stoi(fields[6]);
             flight.assignedGate = std::stoi(fields[7]);
+            flight.delayMinutes = std::stoi(fields[8]);
             flights.push_back(flight);
         } catch (const std::exception&) {
             std::cerr << "Skipping invalid flight record: " << line << '\n';
@@ -313,88 +314,105 @@ int main() {
             case 8: binarySearchFlight(flights, false); break;
             case 9: binarySearchFlight(flights, true); break;
             case 10: {
-                int n;
-                std::cout << "Enter number of elements: ";
-                if (!(std::cin >> n) || n <= 0 || n > 100000) {
-                    std::cin.clear(); std::cin.ignore(10000, '\n');
-                    std::cout << "Enter a valid size between 1 and 100000.\n"; break;
+                if (flights.empty()) {
+                    std::cout << "No flight records are available.\\n";
+                    break;
                 }
-                std::vector<long long> values(n);
-                std::cout << "Enter " << n << " integers: ";
-                bool valid = true;
-                for (int i = 0; i < n; ++i) if (!(std::cin >> values[i])) { valid = false; break; }
-                if (!valid) {
-                    std::cin.clear(); std::cin.ignore(10000, '\n');
-                    std::cout << "Invalid input.\n"; break;
+
+                std::vector<Flight> chronological = flights;
+                // Insertion sort by departure time, keeping the original flight records.
+                for (std::size_t i = 1; i < chronological.size(); ++i) {
+                    Flight current = chronological[i];
+                    int j = static_cast<int>(i) - 1;
+                    while (j >= 0 && chronological[j].departureTime > current.departureTime) {
+                        chronological[j + 1] = chronological[j];
+                        --j;
+                    }
+                    chronological[j + 1] = current;
                 }
-                const MaxSubarrayResult result = maximumSubarray(values, 0, n - 1);
-                std::cout << "Maximum subarray sum: " << result.sum
-                          << " (indices " << result.left << " to " << result.right << ")\n";
+
+                std::vector<long long> delays;
+                for (const auto& flight : chronological) delays.push_back(flight.delayMinutes);
+                MaxSubarrayResult result = maximumSubarray(delays, 0, static_cast<int>(delays.size()) - 1);
+
+                std::cout << "\\nMAXIMUM CONSECUTIVE FLIGHT DELAY IMPACT\\n";
+                std::cout << "Flights in the highest-impact consecutive period: ";
+                for (int i = result.left; i <= result.right; ++i) {
+                    if (i > result.left) std::cout << ", ";
+                    std::cout << chronological[i].flightID << " (" << chronological[i].delayMinutes << " min)";
+                }
+                std::cout << "\\nCombined net delay impact: " << result.sum << " minutes\\n";
+                std::cout << "Algorithm: Divide and Conquer Maximum Subarray, O(n log n).\\n";
                 break;
             }
             case 11: {
-                double base; long long exponent;
-                std::cout << "Enter base and integer exponent: ";
-                if (!(std::cin >> base >> exponent)) {
-                    std::cin.clear(); std::cin.ignore(10000, '\n');
-                    std::cout << "Invalid input.\n"; break;
+                std::vector<std::string> airports;
+                for (const auto& flight : flights) {
+                    bool sourceFound = false, destinationFound = false;
+                    for (const auto& airport : airports) {
+                        if (airport == flight.source) sourceFound = true;
+                        if (airport == flight.destination) destinationFound = true;
+                    }
+                    if (!sourceFound) airports.push_back(flight.source);
+                    if (!destinationFound) airports.push_back(flight.destination);
                 }
-                if (base == 0.0 && exponent < 0) {
-                    std::cout << "Zero cannot have a negative exponent.\n"; break;
+
+                const int n = static_cast<int>(airports.size());
+                std::vector<std::vector<int>> routes(n, std::vector<int>(n, 0));
+                for (const auto& flight : flights) {
+                    int from = -1, to = -1;
+                    for (int i = 0; i < n; ++i) {
+                        if (airports[i] == flight.source) from = i;
+                        if (airports[i] == flight.destination) to = i;
+                    }
+                    if (from != -1 && to != -1) routes[from][to] = 1;
                 }
-                std::cout << "Result: " << fastPower(base, exponent) << '\n';
+
+                int celebrity = findCelebrity(routes);
+                std::cout << "\\nDESTINATION-ONLY AIRPORT ANALYSIS\\n";
+                if (celebrity == -1) {
+                    std::cout << "No destination-only airport exists in the current flight network.\\n";
+                } else {
+                    std::cout << airports[celebrity]
+                              << " is a destination-only airport: every other airport has a direct route to it, "
+                                 "and it has no outgoing route to the others.\\n";
+                }
+                std::cout << "Algorithm: Celebrity candidate elimination, O(V).\\n";
                 break;
             }
             case 12: {
-                int n;
-                std::cout << "Enter number of people: ";
-                if (!(std::cin >> n) || n <= 0 || n > 1000) {
-                    std::cin.clear(); std::cin.ignore(10000, '\n');
-                    std::cout << "Enter a valid size between 1 and 1000.\n"; break;
+                std::vector<std::string> airports;
+                for (const auto& flight : flights) {
+                    bool sourceFound = false, destinationFound = false;
+                    for (const auto& airport : airports) {
+                        if (airport == flight.source) sourceFound = true;
+                        if (airport == flight.destination) destinationFound = true;
+                    }
+                    if (!sourceFound) airports.push_back(flight.source);
+                    if (!destinationFound) airports.push_back(flight.destination);
                 }
-                std::vector<std::vector<int>> knows(n, std::vector<int>(n));
-                std::cout << "Enter the acquaintance matrix (0 or 1), row by row:\n";
-                bool valid = true;
-                for (int i = 0; i < n && valid; ++i)
-                    for (int j = 0; j < n; ++j)
-                        if (!(std::cin >> knows[i][j]) ||
-                            (knows[i][j] != 0 && knows[i][j] != 1)) { valid = false; break; }
-                if (!valid) {
-                    std::cin.clear(); std::cin.ignore(10000, '\n');
-                    std::cout << "Matrix must contain only 0 and 1.\n"; break;
+
+                if (airports.empty()) {
+                    std::cout << "No airport route data is available.\\n";
+                    break;
                 }
-                const int person = findCelebrity(knows);
-                if (person == -1) std::cout << "No celebrity exists.\n";
-                else std::cout << "Celebrity found: Person " << person << " (zero-based index).\n";
-                break;
-            }
-            case 13:
-            case 14: {
-                int n;
-                std::cout << "Enter square matrix dimension (1-64): ";
-                if (!(std::cin >> n) || n <= 0 || n > 64) {
-                    std::cin.clear(); std::cin.ignore(10000, '\n');
-                    std::cout << "Enter a valid dimension between 1 and 64.\n"; break;
+
+                int n = static_cast<int>(airports.size());
+                Matrix connections(n, std::vector<long long>(n, 0));
+                for (const auto& flight : flights) {
+                    int from = -1, to = -1;
+                    for (int i = 0; i < n; ++i) {
+                        if (airports[i] == flight.source) from = i;
+                        if (airports[i] == flight.destination) to = i;
+                    }
+                    if (from != -1 && to != -1) connections[from][to] = 1;
                 }
-                Matrix a(n, std::vector<long long>(n)), b(n, std::vector<long long>(n));
-                bool valid = true;
-                std::cout << "Enter matrix A row by row:\n";
-                for (int i = 0; i < n && valid; ++i)
-                    for (int j = 0; j < n; ++j)
-                        if (!(std::cin >> a[i][j])) { valid = false; break; }
-                std::cout << "Enter matrix B row by row:\n";
-                for (int i = 0; i < n && valid; ++i)
-                    for (int j = 0; j < n; ++j)
-                        if (!(std::cin >> b[i][j])) { valid = false; break; }
-                if (!valid) {
-                    std::cin.clear(); std::cin.ignore(10000, '\n');
-                    std::cout << "Invalid matrix input.\n"; break;
-                }
-                Matrix product = (choice == 13) ? classicalMatrixMultiply(a, b)
-                                                  : strassenMatrixMultiply(a, b);
-                std::cout << (choice == 13 ? "Classical" : "Strassen")
-                          << " multiplication result:\n";
-                printMatrix(product);
+
+                Matrix twoLegRoutes = strassenMatrixMultiply(connections, connections);
+                std::cout << "\\nTWO-LEG AIRPORT CONNECTIONS\\n";
+                std::cout << "Each cell shows the number of two-flight paths from its row airport to its column airport.\\n";
+                printMatrix(twoLegRoutes, airports);
+                std::cout << "Algorithm: Strassen Matrix Multiplication, O(V^log2(7)) approximately O(V^2.807).\\n";
                 break;
             }
             case 0: std::cout << "Exiting Airline Planning Suite. Goodbye!\n"; break;
