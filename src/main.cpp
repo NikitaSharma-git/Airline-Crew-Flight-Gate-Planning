@@ -274,6 +274,8 @@ void showMenu() {
     std::cout << "13. Select maximum non-overlapping flights for a gate (Activity Selection)\n";
     std::cout << "14. Calculate minimum gates required (Interval Partitioning)\n";
     std::cout << "15. Find shortest airport route (Dijkstra)\n";
+    std::cout << "16. Build minimum airport network (Prim)\\n";
+    std::cout << "17. Build minimum airport network (Kruskal)\\n";
     std::cout << "0. Exit\n";
     std::cout << "Choose an option: ";
 }
@@ -545,6 +547,77 @@ int main() {
                 }
                 std::cout << "Algorithm: Dijkstra with an adjacency matrix, O(V^2).\n";
                 std::cout << "Note: Route weights use scheduled flight durations, not connection/waiting times.\n";
+                break;
+            }
+            case 16:
+            case 17: {
+                std::vector<std::string> airports;
+                for (const auto& flight : flights) {
+                    bool sourceFound = false, destinationFound = false;
+                    for (const auto& airport : airports) {
+                        if (airport == flight.source) sourceFound = true;
+                        if (airport == flight.destination) destinationFound = true;
+                    }
+                    if (!sourceFound) airports.push_back(flight.source);
+                    if (!destinationFound) airports.push_back(flight.destination);
+                }
+
+                if (airports.empty()) {
+                    std::cout << "No airport route data is available.\\n";
+                    break;
+                }
+
+                std::vector<WeightedEdge> edges;
+                for (const auto& flight : flights) {
+                    int from = -1, to = -1;
+                    for (int i = 0; i < static_cast<int>(airports.size()); ++i) {
+                        if (airports[i] == flight.source) from = i;
+                        if (airports[i] == flight.destination) to = i;
+                    }
+                    int duration = flight.arrivalTime - flight.departureTime;
+                    if (from == -1 || to == -1 || from == to || duration <= 0) continue;
+
+                    int first = from < to ? from : to;
+                    int second = from < to ? to : from;
+                    bool updated = false;
+                    for (auto& edge : edges) {
+                        if (edge.from == first && edge.to == second) {
+                            if (duration < edge.weight) edge.weight = duration;
+                            updated = true;
+                            break;
+                        }
+                    }
+                    if (!updated) edges.push_back({first, second, duration});
+                }
+
+                MSTResult result = (choice == 16)
+                    ? primMinimumSpanningForest(static_cast<int>(airports.size()), edges)
+                    : kruskalMinimumSpanningForest(static_cast<int>(airports.size()), edges);
+
+                std::cout << (choice == 16
+                    ? "\\nPRIM MINIMUM SPANNING NETWORK\\n"
+                    : "\\nKRUSKAL MINIMUM SPANNING NETWORK\\n");
+
+                if (result.edges.empty() && airports.size() > 1) {
+                    std::cout << "No airport connections are available to build a network.\\n";
+                } else {
+                    for (const auto& edge : result.edges) {
+                        std::cout << airports[edge.from] << " -- " << airports[edge.to]
+                                  << " | " << edge.weight << " minutes\\n";
+                    }
+                    std::cout << "Total network weight: " << result.totalWeight << " minutes\\n";
+                    if (result.components == 1) {
+                        std::cout << "All airports are connected in one minimum spanning network.\\n";
+                    } else {
+                        std::cout << "The route data is disconnected; displayed a minimum spanning forest with "
+                                  << result.components << " components.\\n";
+                    }
+                }
+
+                std::cout << "Algorithm: " << (choice == 16 ? "Prim" : "Kruskal")
+                          << (choice == 16 ? ", O(V^2) with an adjacency matrix.\\n"
+                                           : ", O(E log E) for sorting edges.\\n");
+                std::cout << "Note: Scheduled flight durations are used as undirected connection-cost estimates.\\n";
                 break;
             }
             case 0: std::cout << "Exiting Airline Planning Suite. Goodbye!\n"; break;
