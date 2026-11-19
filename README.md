@@ -1,37 +1,32 @@
 # Airline Crew, Flight and Gate Planning Suite
 
-A C++17 student project that models airline operations, including flights, crew members, airport gates, scheduling constraints, conflict detection and disruption recovery.
+A C++17 student project that models airline operations using flight, crew, gate and airport-route data.
 
 ## Project status
 
-**Phase 3 – Divide and Conquer**
+**Phase 3 – Airline-focused Divide and Conquer**
 
 The application currently provides:
-- Core Flight, Crew and Gate data structures.
 - CSV loading for sample flights, crew and gates.
-- A menu-driven command-line interface.
-- Flight listing and linear flight-ID lookup.
-- Crew and gate directories.
+- Menu-driven command-line interface.
+- Flight listing, linear flight-ID lookup, crew and gate directories.
 - Basic overlapping gate-assignment conflict detection.
-- Merge Sort and Quick Sort implementations for sorting flights by flight ID.
-- Iterative and Recursive Binary Search implementations for flight-ID lookup.
-- Comparison counters for sorting and binary-search operations.
-- Divide-and-Conquer maximum subarray with index reporting.
-- Fast exponentiation by squaring, including negative integer exponents.
-- Celebrity identification by candidate elimination and verification.
-- Classical and Strassen square matrix multiplication; Strassen pads dimensions to a power of two.
+- Merge Sort and Quick Sort for flight IDs.
+- Iterative and Recursive Binary Search for flight IDs.
+- Comparison counters for sorting and searching.
+- Maximum Subarray analysis on actual flight delay values.
+- Celebrity Problem analysis on the directed airport route network.
+- Strassen multiplication of the airport connectivity matrix to count two-leg routes.
 
-## Phase 3 algorithm notes
+## Phase 3 algorithms
 
-| Algorithm | Time complexity |
-|---|---|
-| Maximum Subarray (Divide and Conquer) | O(n log n) |
-| Fast Exponentiation | O(log n) |
-| Celebrity Problem | O(n) |
-| Classical Matrix Multiplication | O(n³) |
-| Strassen Matrix Multiplication | O(n^log₂7), approximately O(n²·⁸⁰⁷) |
+| Algorithm | How it is used in this project | Time complexity |
+|---|---|---|
+| Maximum Subarray | Finds the consecutive departure-time-ordered flights with the highest combined net delay impact. Positive delay means late; negative means early. | O(n log n) |
+| Celebrity Problem | Finds a destination-only airport: every other airport has a direct route to it, and it has no outgoing route to other airports. | O(V) |
+| Strassen Matrix Multiplication | Squares the airport adjacency matrix. Each result cell counts two-leg paths through one intermediate airport. | O(V^log₂7), approximately O(V²·⁸⁰⁷) |
 
-The celebrity matrix uses 1 when the row person knows the column person and 0 otherwise. The result uses a zero-based person index. Matrix multiplication accepts square matrices of dimensions 1–64.
+For Strassen, matrix dimensions are padded to the next power of two and the result is cropped back to the airport count. All three algorithms use the flights loaded from `data/flights.csv`; they do not ask the user to enter unrelated sample arrays or matrices.
 
 ## Phase 2 algorithm notes
 
@@ -66,16 +61,16 @@ Run the application from the repository root so the relative CSV data paths reso
 g++ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude src/main.cpp -o airline_planner
 ```
 
-On Windows PowerShell, run:
+On Windows PowerShell:
 
 ```powershell
-.\airline_planner.exe
+.\\airline_planner.exe
 ```
 
 ## Sample data
 
 CSV files are stored in `data/`:
-- `flights.csv`
+- `flights.csv` includes a `delay_minutes` column. Positive values indicate late arrivals; negative values indicate early arrivals.
 - `crew.csv`
 - `gates.csv`
 
@@ -94,7 +89,7 @@ Times are represented as minutes after midnight. For example, 480 represents 08:
 
 ## Academic note
 
-Mandatory DAA algorithms are implemented directly rather than replaced with library sorting or searching calls. Standard library containers and utilities are used for supporting application code.
+Mandatory DAA algorithms are implemented directly rather than replaced with library sorting or searching calls. Standard library containers and utilities support the application.
 
 ## License
 
