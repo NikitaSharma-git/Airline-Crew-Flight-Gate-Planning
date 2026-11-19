@@ -16,3 +16,13 @@ if(MSVC)
 else()
     target_compile_options(airline_planner PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+include(CTest)
+if(BUILD_TESTING)
+    add_executable(advanced_tests tests/test_advanced.cpp)
+    target_include_directories(advanced_tests PRIVATE include)
+    add_test(NAME advanced_algorithm_tests COMMAND advanced_tests)
+endif()
+
+add_executable(algorithm_benchmark benchmarks/benchmark.cpp)
+target_include_directories(algorithm_benchmark PRIVATE include)
