@@ -31,7 +31,7 @@ The application currently provides:
 
 Menu option 13 asks for a gate ID and displays the selected compatible flights. Menu option 14 displays a temporary gate plan for all flights. The temporary plan does not overwrite the original gate assignments in the CSV file.
 
-| Dijkstra Shortest Path | Finds the minimum total scheduled flight duration between two selected airports using the directed flight network. | O(V²) with an adjacency matrix |
+| Prim Minimum Spanning Tree | Builds a minimum-weight undirected airport connection network by repeatedly adding the cheapest edge that expands the current tree. | O(V²) with an adjacency matrix |\n| Kruskal Minimum Spanning Tree | Builds a minimum-weight airport connection network by sorting route edges and joining components without creating cycles. | O(E log E) for edge sorting; DSU operations are near-constant amortized |\n\nMenu option 16 runs Prim and option 17 runs Kruskal. Both treat scheduled flight durations as undirected connection-cost estimates. If the route network is disconnected, they report a minimum spanning forest and its component count.\n\n| Dijkstra Shortest Path | Finds the minimum total scheduled flight duration between two selected airports using the directed flight network. | O(V²) with an adjacency matrix |
 
 Menu option 15 asks the user to select source and destination airports. The route weights are flight durations; connection and waiting times are not included.
 
