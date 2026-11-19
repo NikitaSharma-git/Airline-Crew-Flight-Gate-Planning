@@ -1,0 +1,7 @@
+flight_id,airline,source,destination,departure,arrival,required_crew,assigned_gate
+1001,IndiGo,Delhi,Mumbai,480,620,4,1
+1002,Air India,Mumbai,Bengaluru,540,660,5,2
+1003,IndiGo,Delhi,Dehradun,570,630,3,1
+1004,Air India,Bengaluru,Chennai,690,780,4,3
+1005,Akasa Air,Delhi,Goa,750,900,4,2
+1006,IndiGo,Dehradun,Delhi,810,870,3,4
