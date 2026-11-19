@@ -4,7 +4,7 @@ A C++17 student project that models airline operations using flight, crew, gate 
 
 ## Project status
 
-**Phase 4 – Greedy Flight Scheduling (initial implementation)**
+**Phase 4 – Greedy and Graph Algorithms (in progress)**
 
 The application currently provides:
 - CSV loading for sample flights, crew and gates.
@@ -19,6 +19,7 @@ The application currently provides:
 - Strassen multiplication of the airport connectivity matrix to count two-leg routes.
 - Activity Selection to choose the maximum number of non-overlapping flights assigned to a selected gate.
 - Interval Partitioning to calculate the minimum number of temporary gates required for the loaded flight schedule.
+- Dijkstra shortest-path analysis using scheduled flight durations between airports.
 
 
 ## Phase 4 greedy algorithms
@@ -29,6 +30,10 @@ The application currently provides:
 | Interval Partitioning | Sorts all flights by departure time and reuses a temporary gate whenever its previous flight has finished. The number of temporary gates created is the minimum required for the schedule. | O(n²) with manual insertion sort and linear gate search |
 
 Menu option 13 asks for a gate ID and displays the selected compatible flights. Menu option 14 displays a temporary gate plan for all flights. The temporary plan does not overwrite the original gate assignments in the CSV file.
+
+| Dijkstra Shortest Path | Finds the minimum total scheduled flight duration between two selected airports using the directed flight network. | O(V²) with an adjacency matrix |
+
+Menu option 15 asks the user to select source and destination airports. The route weights are flight durations; connection and waiting times are not included.
 
 ## Phase 3 algorithms
 
