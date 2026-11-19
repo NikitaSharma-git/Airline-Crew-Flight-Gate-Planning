@@ -4,12 +4,91 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <regex>
 #include <string>
 #include <vector>
 
 #include "advanced_algorithms.hpp"
 
-inline void runAdvancedAlgorithms(const std::vector<Flight>& flights,
+
+inline bool readJsonStringField(const std::string& object, const std::string& key, std::string& value) {
+    std::regex pattern("\"" + key + "\"\\s*:\\s*\"([^\"]*)\"");
+    std::smatch match;
+    if (!std::regex_search(object, match, pattern)) return false;
+    value = match[1].str();
+    return true;
+}
+
+inline bool readJsonIntField(const std::string& object, const std::string& key, int& value) {
+    std::regex pattern("\"" + key + "\"\\s*:\\s*(-?[0-9]+)");
+    std::smatch match;
+    if (!std::regex_search(object, match, pattern)) return false;
+    try { value = std::stoi(match[1].str()); return true; }
+    catch (const std::exception&) { return false; }
+}
+
+inline std::string escapeJsonString(const std::string& value) {
+    std::string escaped;
+    for (char c : value) {
+        if (c == '\\' || c == '"') escaped += '\\';
+        if (c == '\n') { escaped += "\\n"; continue; }
+        if (c == '\r') { escaped += "\\r"; continue; }
+        escaped += c;
+    }
+    return escaped;
+}
+
+inline bool importFlightsJson(const std::string& path, std::vector<Flight>& flights, bool append) {
+    std::ifstream input(path);
+    if (!input) return false;
+    std::string content((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+    std::regex objectPattern("\\{[^\\}]*\\}");
+    std::vector<Flight> imported;
+    for (std::sregex_iterator it(content.begin(), content.end(), objectPattern), end; it != end; ++it) {
+        const std::string object = it->str();
+        Flight flight;
+        if (!readJsonIntField(object, "flight_id", flight.flightID) ||
+            !readJsonStringField(object, "airline", flight.airline) ||
+            !readJsonStringField(object, "source", flight.source) ||
+            !readJsonStringField(object, "destination", flight.destination) ||
+            !readJsonIntField(object, "departure", flight.departureTime) ||
+            !readJsonIntField(object, "arrival", flight.arrivalTime) ||
+            !readJsonIntField(object, "required_crew", flight.requiredCrew) ||
+            !readJsonIntField(object, "assigned_gate", flight.assignedGate) ||
+            !readJsonIntField(object, "delay_minutes", flight.delayMinutes)) {
+            return false;
+        }
+        imported.push_back(flight);
+    }
+    if (imported.empty()) return false;
+    if (!append) flights.clear();
+    for (const auto& flight : imported) flights.push_back(flight);
+    return true;
+}
+
+inline bool exportFlightsJson(const std::string& path, const std::vector<Flight>& flights) {
+    std::ofstream out(path);
+    if (!out) return false;
+    out << "{\n  \"flights\": [\n";
+    for (std::size_t i = 0; i < flights.size(); ++i) {
+        const auto& f = flights[i];
+        out << "    {\"flight_id\": " << f.flightID
+            << ", \"airline\": \"" << escapeJsonString(f.airline)
+            << "\", \"source\": \"" << escapeJsonString(f.source)
+            << "\", \"destination\": \"" << escapeJsonString(f.destination)
+            << "\", \"departure\": " << f.departureTime
+            << ", \"arrival\": " << f.arrivalTime
+            << ", \"required_crew\": " << f.requiredCrew
+            << ", \"assigned_gate\": " << f.assignedGate
+            << ", \"delay_minutes\": " << f.delayMinutes << "}";
+        if (i + 1 < flights.size()) out << ",";
+        out << "\n";
+    }
+    out << "  ]\n}\n";
+    return true;
+}
+
+inline void runAdvancedAlgorithms(std::vector<Flight>& flights,
                                  const std::vector<Crew>& crew,
                                  const std::vector<Gate>& gates) {
     using namespace advanced;
@@ -274,6 +353,20 @@ inline void runAdvancedAlgorithms(const std::vector<Flight>& flights,
                         << "," << f.requiredCrew << "," << f.assignedGate << "," << f.delayMinutes << "\n";
                 std::cout << "Exported " << flights.size() << " records to data/flight_manifest_export.csv\n";
             }
+        } else if (option == 17) {
+            int mode;
+            std::cout << "Import mode (1 replace current flights, 2 append): ";
+            std::cin >> mode;
+            if (mode != 1 && mode != 2) { std::cout << "Invalid import mode.\n"; continue; }
+            if (importFlightsJson("data/flights.json", flights, mode == 2))
+                std::cout << "JSON import completed. Current flight count: " << flights.size() << "\n";
+            else
+                std::cout << "JSON import failed. Check data/flights.json and its required field names.\n";
+        } else if (option == 18) {
+            if (exportFlightsJson("data/flight_manifest_export.json", flights))
+                std::cout << "Exported " << flights.size() << " records to data/flight_manifest_export.json\n";
+            else
+                std::cout << "Could not create JSON export in data/.\n";
         } else if (option == 0) {
             std::cout << "Returning to the main menu.\n";
         } else {
