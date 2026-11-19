@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -488,7 +489,7 @@ int main() {
                 }
 
                 const int n = static_cast<int>(airports.size());
-                const int infinity = 1000000000;
+                const int infinity = std::numeric_limits<int>::max() / 4;
                 std::vector<std::vector<int>> graph(n, std::vector<int>(n, 0));
                 for (const auto& flight : flights) {
                     int from = -1, to = -1;
