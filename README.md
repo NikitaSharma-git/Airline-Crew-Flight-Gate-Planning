@@ -4,7 +4,7 @@ A C++17 student project that models airline operations using flight, crew, gate 
 
 ## Project status
 
-**Phase 4 – Greedy and Graph Algorithms (in progress)**
+**Integrated DAA suite – Phases 1–8 implemented; local validation and final refinements in progress**
 
 The application currently provides:
 - CSV loading for sample flights, crew and gates.
@@ -55,6 +55,60 @@ For Strassen, matrix dimensions are padded to the next power of two and the resu
 | Recursive Binary Search | Find a flight in an ID-sorted list | O(log n) |
 
 **Important:** Binary Search requires the flight list to be sorted by flight ID first. Run option 6 or 7 before options 8 or 9. Option 2 remains Linear Search and works regardless of sorting order.
+
+## Integrated advanced DAA lab (main-menu option 18)
+
+The advanced lab is opened from the main menu and keeps the earlier options 1–17 intact.
+
+| Topic | Algorithm | Airline-planning use |
+|---|---|---|
+| Greedy | Huffman Coding | Builds prefix codes for a flight-operation text manifest and reports encoded length. |
+| Dynamic Programming | 0/1 Knapsack | Selects high-delay-priority flights under a limited available-crew budget; crew requirement is the item weight and delay priority is the value. |
+| Dynamic Programming | Matrix Chain Multiplication | Finds the least-cost multiplication order for user-entered matrix dimensions. |
+| Dynamic Programming | Longest Common Subsequence | Compares the ordered source and destination airport label sequences. |
+| Dynamic Programming | Optimal BST | Uses incoming-flight counts as airport lookup-frequency weights. |
+| Graph DP | Bellman-Ford | Calculates single-source airport route costs and detects reachable negative cycles. |
+| Graph DP | Floyd-Warshall | Calculates all-pairs shortest scheduled flight-duration paths. |
+| Backtracking / B&B | Bounded TSP | Searches for a minimum-cost directed tour through the loaded airports, bounded to 12 airports. |
+| Backtracking | N-Queens | Demonstrates constraint-based backtracking with a board size from 1 to 12. |
+| Backtracking | Subset Sum | Finds a subset of flight crew requirements matching a target crew total. |
+| Branch & Bound | FIFO, LIFO and best-bound search | Solves the crew-budget flight-priority knapsack with three node-selection strategies. |
+| Network Flow | Ford-Fulkerson (BFS augmenting paths) | Computes flow over the airport route graph using summed required-crew values as an explicitly illustrative capacity proxy. |
+| Matching | Bipartite Matching | Matches available crew members to individual flight-duty slots when their availability covers the flight. |
+| Number Theory | Chinese Remainder Theorem | Finds a synchronized time offset for user-entered pairwise-coprime schedule cycles. |
+| String Matching | Naive, Rabin-Karp, Finite Automaton and KMP | Searches a generated flight manifest and displays match positions from all four methods. |
+| Integration | CSV export | Writes the loaded flight manifest to data/flight_manifest_export.csv. |
+
+### Modeling assumptions and limitations
+
+- Flight-route edge weights are scheduled flight durations. These are not complete itinerary times because layovers, transfer buffers, aircraft rotations and time zones are not modeled.
+- The network-flow example uses required-crew totals as a teaching capacity proxy, not passenger or aircraft capacity. It should not be interpreted as a real-world airline capacity forecast.
+- Knapsack prioritizes flights by positive delay minutes plus one, with required crew as resource consumption. This is an academic priority model, not an operational dispatch decision.
+- Optimal-BST weights are derived from the number of incoming sample flights, not measured search logs.
+- The CRT tool accepts schedule congruences from the user and requires pairwise-coprime positive moduli.
+- The bounded TSP search is exponential and is intentionally restricted to at most 12 airports.
+- The finite-automaton string matcher builds a byte-alphabet transition table and is intended for educational-sized manifests.
+
+## Automated tests and benchmarking
+
+Build the application, test executable and benchmark runner:
+
+    cmake -S . -B build -DBUILD_TESTING=ON
+    cmake --build build --parallel
+
+Run automated algorithm tests:
+
+    ctest --test-dir build --output-on-failure
+
+Run the string-matching comparison:
+
+    ./build/algorithm_benchmark
+
+On Windows, run build\algorithm_benchmark.exe.
+
+The GitHub Actions workflow in .github/workflows/cpp.yml configures CMake, builds the targets and runs CTest on pushes and pull requests to main.
+
+The tests cover representative known-answer cases for the dynamic-programming, backtracking, branch-and-bound, flow, matching, CRT, string-matching and Huffman implementations. Benchmark timings depend on the machine and compiler; they are measurements, not fixed performance claims.
 
 ## Requirements
 
