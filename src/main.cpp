@@ -36,11 +36,13 @@ void showFlights(const vector<Flight>& data) {
 }
 
 // 1. Merge Sort: sort flights by departure time.
-void mergeFlights(vector<Flight>& a, int left, int mid, int right) {
+void mergeFlights(vector<Flight>& a, int left, int mid, int right, bool byArrival) {
     vector<Flight> temp;
     int i = left, j = mid + 1;
     while (i <= mid && j <= right) {
-        if (a[i].departure <= a[j].departure) temp.push_back(a[i++]);
+        bool takeLeft = byArrival ? a[i].arrival <= a[j].arrival
+                                  : a[i].departure <= a[j].departure;
+        if (takeLeft) temp.push_back(a[i++]);
         else temp.push_back(a[j++]);
     }
     while (i <= mid) temp.push_back(a[i++]);
@@ -48,12 +50,12 @@ void mergeFlights(vector<Flight>& a, int left, int mid, int right) {
     for (int k = 0; k < (int)temp.size(); ++k) a[left + k] = temp[k];
 }
 
-void mergeSort(vector<Flight>& a, int left, int right) {
+void mergeSort(vector<Flight>& a, int left, int right, bool byArrival = false) {
     if (left >= right) return;
     int mid = left + (right - left) / 2;
-    mergeSort(a, left, mid);
-    mergeSort(a, mid + 1, right);
-    mergeFlights(a, left, mid, right);
+    mergeSort(a, left, mid, byArrival);
+    mergeSort(a, mid + 1, right, byArrival);
+    mergeFlights(a, left, mid, right, byArrival);
 }
 
 // 2. Binary Search: find a flight by ID in ID-sorted data.
@@ -71,9 +73,7 @@ int binarySearch(const vector<Flight>& a, int id) {
 // 3. Activity Selection: choose the maximum non-overlapping flights.
 void activitySelection() {
     vector<Flight> a = flights;
-    sort(a.begin(), a.end(), [](const Flight& x, const Flight& y) {
-        return x.arrival < y.arrival;
-    });
+    mergeSort(a, 0, (int)a.size() - 1, true);
     int lastArrival = -1, count = 0;
     cout << "\nSelected non-overlapping flights:\n";
     for (const auto& f : a) {
@@ -90,9 +90,7 @@ void activitySelection() {
 // 4. Interval Partitioning: find the minimum gates needed.
 void intervalPartitioning() {
     vector<Flight> a = flights;
-    sort(a.begin(), a.end(), [](const Flight& x, const Flight& y) {
-        return x.departure < y.departure;
-    });
+    mergeSort(a, 0, (int)a.size() - 1);
     priority_queue<int, vector<int>, greater<int>> gateEndTimes;
     for (const auto& f : a) {
         if (!gateEndTimes.empty() && gateEndTimes.top() <= f.departure)
