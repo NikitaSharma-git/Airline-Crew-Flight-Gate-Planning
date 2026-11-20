@@ -24,7 +24,7 @@ static bool timeOverlap(const Flight& a, const Flight& b) {
 }
 static bool crewHasAssignment(const vector<Flight>& flights, int crewId) {
     for (const auto& f : flights)
-        if (f.crewId == crewId && f.status != "Cancelled") return true;
+        if (f.crewId == crewId) return true;
     return false;
 }
 void showCrew(const vector<Crew>& crew) {
