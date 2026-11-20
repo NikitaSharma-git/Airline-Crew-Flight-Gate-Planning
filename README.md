@@ -14,12 +14,12 @@ A menu-driven C++17 project that combines airline operations management with fiv
 
 ## System modules
 
-- **Flight Management:** add, view, update, delete, search and sort flights; update flight status.
-- **Crew Management:** maintain crew records, assign crew to flights and release assignments.
-- **Gate Management:** add and activate gates, assign/release gates and detect overlapping gate use.
+- **Flight Management:** add, view, update, delete, search and sort flights; reschedule flights with crew and gate conflict checks; filter by status.
+- **Crew Management:** maintain crew records, assign crew to multiple non-overlapping flights, prevent overlapping assignments, view crew schedules and summarise roles.
+- **Gate Management:** add and activate gates, automatically or manually assign gates, release assignments, find gates available for a selected time slot and detect conflicts.
 - **Airport and Route Management:** add/remove airports and maintain two-way weighted routes.
 - **DAA Algorithm Centre:** run demonstrations of all five algorithms using the current records.
-- **Reports and Analytics:** view flight status totals, crew availability, gate usage and route frequency.
+- **Reports and Analytics:** view flight status totals, delay percentage, average duration, crew availability, gate utilisation, route frequency and busiest airport.
 - **CSV Storage:** load records at startup and save changes to the data folder.
 
 ## Project structure
@@ -51,5 +51,6 @@ Run the executable from the repository root so that the relative data/*.csv path
 
 - The included flights, crew, gates, airports and route distances are sample educational data.
 - Route distances are illustrative and are not live airline data.
-- Crew assignment prevents assigning an already-assigned crew member, but does not model real duty-time regulations or overlapping shift calendars.
+- Crew scheduling checks overlapping flight intervals, but does not model real duty-time regulations, rest periods, qualifications or crew-team requirements.
+- Flight and gate times are represented as minutes after midnight; the project uses a simplified schedule model.
 - The project demonstrates algorithmic ideas; it is not intended for real airline operations.
