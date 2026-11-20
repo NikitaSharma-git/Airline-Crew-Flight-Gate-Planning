@@ -15,10 +15,10 @@ struct Flight {
 vector<Flight> flights = {
     {101, "DEL", "BOM", 480, 600},
     {102, "DEL", "BLR", 510, 650},
-    {103, "BOM", "HYD", 630, 750},
-    {104, "BLR", "MAA", 690, 810},
+    {103, "DEL", "HYD", 630, 750},
+    {104, "DEL", "MAA", 690, 810},
     {105, "DEL", "JAI", 720, 780},
-    {106, "HYD", "CCU", 790, 910}
+    {106, "DEL", "CCU", 790, 910}
 };
 
 string clockTime(int minutes) {
