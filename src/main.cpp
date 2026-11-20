@@ -116,7 +116,8 @@ void dijkstra() {
     dist[0] = 0;
     pq.push({0, 0});
     while (!pq.empty()) {
-        auto [cost, u] = pq.top();
+        int cost = pq.top().first;
+        int u = pq.top().second;
         pq.pop();
         if (cost != dist[u]) continue;
         for (int v = 0; v < n; ++v) {
