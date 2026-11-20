@@ -1,6 +1,0 @@
-gate_id,terminal,capacity,available
-1,T1,180,true
-2,T1,220,true
-3,T2,160,true
-4,T2,200,true
-5,T3,250,true
