@@ -78,7 +78,12 @@ static void updateFlight(vector<Flight>& flights) {
 static void deleteFlight(vector<Flight>& flights) {
     int id = readInt("Flight ID to delete: "), i = findFlightIndex(flights, id);
     if (i < 0) { cout << "Flight not found.\n"; return; }
-    flights.erase(flights.begin() + i); cout << "Flight deleted.\n";
+    if (flights[i].crewId || flights[i].gateId) {
+        cout << "Release the assigned crew and gate before deleting this flight.\n";
+        return;
+    }
+    flights.erase(flights.begin() + i);
+    cout << "Flight deleted.\n";
 }
 void flightMenu(vector<Flight>& flights) {
     int choice;
