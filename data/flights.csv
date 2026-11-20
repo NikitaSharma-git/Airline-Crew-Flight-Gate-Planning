@@ -1,0 +1,7 @@
+id;from;to;departure;arrival;crewId;gateId;status
+101;DEL;BOM;480;600;201;1;Scheduled
+102;DEL;BLR;510;650;202;2;Delayed
+103;DEL;HYD;630;750;203;1;Scheduled
+104;DEL;MAA;690;810;204;3;Scheduled
+105;DEL;JAI;720;780;0;0;Scheduled
+106;DEL;CCU;790;910;0;0;Scheduled
